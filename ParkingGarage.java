@@ -12,9 +12,6 @@ public class ParkingGarage{
     // Queue containing cars waiting to enter the garage
     private QueueInterface<Car> entryLine = new LinkedQueue<Car>();
 
-    // Queue containing cars waiting to leave the garage
-    private QueueInterface<Car> exitLIne = new LinkedQueue<>();
-
     // Variables for performance tracking
     private int numberOfCars; // the number of cars that parked during the simulation
     private int totalTimeWaited; // the total number of clock ticks cars waited in queue before parking
@@ -68,6 +65,7 @@ public class ParkingGarage{
                             System.out.println("Car number " + enteringCar.getCarNumber() + ", has parked");
                         totalTimeWaited += time - enteringCar.getArrivalTime();
                         entryLine.enqueue(newCar);
+                            System.out.println("Car number " + newCar.getCarNumber() + ", has entered the waiting queue.");
                     }
                     numberOfCars++;
                 }
@@ -75,6 +73,8 @@ public class ParkingGarage{
                     // if all the parking floors are occupied, the car wishing
                     // to enter the parking garage must get in the waiting queue
                     entryLine.enqueue(newCar);
+                    System.out.println("Car number " + newCar.getCarNumber() + ", has entered the waiting queue.");
+
                 }
             }
         }
@@ -115,7 +115,7 @@ public class ParkingGarage{
         System.out.println("Total number of cars parked: " + numberOfCars);
         System.out.println("Number of cars currently in the garage: " + (runningTally * 3));
         System.out.println("Average wait time: " + (totalTimeWaited / numberOfCars));
-        System.out.println("Cars waiting to get in: " + (totalArrivals - numberOfCars));
+        System.out.println("Cars waiting to get in: " + countCars(entryLine));
         System.out.println("Cars that have entered and left the garage: " + totalDepartures);
         for (int i = 0; i < parkingGarage.length; i++){
             System.out.println("Number of cars on floor " + i + ": " + parkingGarage[i].getSize());
