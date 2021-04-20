@@ -1,182 +1,127 @@
-import LinkedQueue.*;
-import arrayBag.*;
-public class ParkingGarage {
-    //ZEKE BRANCH
-        private QueueInterface<Car> enteringQueue;
-        private QueueInterface<Car> leavingQueue;
-        private BagInterface<Car> floorOne;
-        private BagInterface<Car> floorTwo;
-        private BagInterface<Car> floorThree;
-        private int enteredQueueSize; // the amount of cars that have entered the entering queue
-        private int departureQueueSize; // the amount of cars that have entered the leaving queue
-        private int successfulEntries; // the amount of cars that have successfully entered the parking garage
-        private int successfulDepartures; // the amount of cars that have successfully left the parking garage
-        private int floorOneEntries;
-        private int floorTwoEntries;
-        private int floorThreeEntries;
+import java.util.Random;
+import java.util.Vector;
 
-        public ParkingGarage()
-        {
-            enteringQueue = new LinkedQueue<Car>();
-            leavingQueue = new LinkedQueue<Car>();
-            floorOne = new ArrayBag<>(5);
-            floorTwo = new ArrayBag<>(5);
-            floorThree = new ArrayBag<>(5);
-            reset();
-        } // end default constructor
+/**
+ * This class simulates activity inside of a 3-story parking garage at a grocery store.
+ */
+public class ParkingGarage{
+    // 2D array representing the garage itself
+    @SuppressWarnings("unchecked")
+    private ArrayBag<Car>[] parkingGarage = (ArrayBag<Car>[]) new ArrayBag[3];
 
-        /**
-         * Simulates a parking garage with two floors, with a fixed number of
-         *  available spots.
-         * @param duration  The number of simulated minutes.
-         * @param spawnProbability    A real number between 0 and 1,
-         *                              and the probability that a car
-         *                              spawns at a given time.
-         * @param maxTransactionTime    The longest amount of time
-         *                              that a car can take to
-         *                              stay in a spot.
-         */
-        public void simulate(int duration, double spawnProbability, int maxTransactionTime)
-        {
-            int fOneTTL = 0;
-            int fTwoTTL = 0;
-            int fThreeTTL = 0;
-            for (int clock = 0; clock < duration; clock++)
-            {
-                // creates a car
-                if ((Math.random() < spawnProbability))
-                {
-                    enteredQueueSize++;
-                    int transactionTime = (int) (Math.random() * maxTransactionTime + 1);
-                    Car nextArrival = new Car(enteredQueueSize, clock, transactionTime);
-                    enteringQueue.enqueue(nextArrival);
-                } // end if
+    // Queue containing cars waiting to enter the garage
+    private QueueInterface<Car> entryLine = new LinkedQueue<Car>();
 
-                while(!leavingQueue.isEmpty())
-                {
-                    Car exitCar = leavingQueue.dequeue();
-                    System.out.println("Car " + exitCar.getCarNumber() + " leaves the parking garage at time " + clock);
-                    successfulDepartures++;
-                } // end while
+    // Variables for performance tracking
+    private int numberOfCars; // the number of cars that parked during the simulation
+    private int totalTimeWaited; // the total number of clock ticks cars waited in queue before parking
+    private int totalArrivals; // the number of cars that arrived at the garage, regardless of whether or not they parked
 
-                // checks to see if any of the floors are full.  If there
-                // is an open spot on a given floor, the next car in the
-                // entering queue will be added to that floor, otherwise,
-                // nothing happens.
-                if(!floorOne.isFull() && !enteringQueue.isEmpty())
-                {
-                    Car nextCar = enteringQueue.dequeue();
-                    floorOne.add(nextCar);
-                    System.out.println("Car " + nextCar.getCarNumber() + " parks on floorOne.");
-                    floorOneEntries++;
+    public ParkingGarage(){
+        ArrayBag<Car> f1 = new ArrayBag<Car>(10);
+        ArrayBag<Car> f2 = new ArrayBag<Car>(10);
+        ArrayBag<Car> f3 = new ArrayBag<Car>(10);
+        for (int i = 0; i < parkingGarage.length; i++){
+            parkingGarage[i] = f1;
+        }
+    }
+
+    public void simulate(int duration, double arrivalProb){
+        Random rand = new Random();
+        for (int time = 0; time <= duration; time++){
+            if (rand.nextFloat() < 0.3){ //chance a car leaves given that there's a car in the garage
+                int level = randomLevel();
+                if (level != -1){
+                    Car departingCar = parkingGarage[level].randRemove();
                 }
-                else if(!floorTwo.isFull() && !enteringQueue.isEmpty())
-                {
-                    Car nextCar = enteringQueue.dequeue();
-                    floorTwo.add(nextCar);
-                    System.out.println("Car " + nextCar.getCarNumber() + " parks on floorTwo.");
-                    floorTwoEntries++;
+            }
+            if (rand.nextFloat() < arrivalProb){
+                Car newCar = new Car(time);
+                totalArrivals++;
+                int nextSpot = nextAvailableLocation();
+                if (nextSpot != -1){
+                    if (entryLine.isEmpty()){
+                        parkingGarage[nextSpot].add(newCar);
+                    }
+                    else{
+                        Car enteringCar = entryLine.dequeue();
+                        parkingGarage[nextSpot].add(enteringCar);
+                        totalTimeWaited += time - enteringCar.getArrivalTime();
+                        entryLine.enqueue(newCar);
+                    }
+                    numberOfCars++;
                 }
-                else if(!floorThree.isFull() && !enteringQueue.isEmpty())
-                {
-                    Car nextCar = enteringQueue.dequeue();
-                    floorThree.add(nextCar);
-                    System.out.println("Car " + nextCar.getCarNumber() + " parks on floorThree.");
-                    floorThreeEntries++;
+                else {
+                    entryLine.enqueue(newCar);
                 }
-                else
-                    continue;
-                // end if
+            }
+        }
+        displayResults();
+    }
 
-                if (fOneTTL > 0)
-                    fOneTTL--;
-                else if(!floorOne.isEmpty())
-                {
-                    for(int i = 0; i < floorOne.getCurrentSize(); i++)
-                    {
-                        // checks to see if any cars should leave based on
-                        // their transaction time
-                        Car car = floorOne.getObject(i);
-                        fOneTTL = car.getTransactionTime() - 1;
-                        if(car.getTransactionTime() == (fOneTTL - car.getArrivalTime()))
-                        {
-                            leavingQueue.enqueue(floorOne.replace(car, null));
-                            System.out.println("Car " + car.getCarNumber() + " enters the leavingQueue from floorOne at time " + clock);
-                            departureQueueSize++;
-                        } // end if
-                    } // end for
-                }
-                if(fTwoTTL > 0)
-                    fTwoTTL--;
-                else if(!floorTwo.isEmpty())
-                {
-                    for(int i = 0; i < floorTwo.getCurrentSize(); i++)
-                    {
-                        // checks to see if any cars should leave based on
-                        // their transaction time
-                        Car car = floorTwo.getObject(i);
-                        fTwoTTL = car.getTransactionTime() - 1;
-                        if(car.getTransactionTime() == (fTwoTTL - car.getArrivalTime()))
-                        {
-                            leavingQueue.enqueue(floorTwo.replace(car, null));
-                            System.out.println("Car " + car.getCarNumber() + " enters the leavingQueue from floorTwo at time " + clock);
-                            departureQueueSize++;
-                        } // end if
-                    } // end for
-                }
-                if(fThreeTTL > 0)
-                    fThreeTTL--;
-                else if(!floorThree.isEmpty())
-                {
-                    for(int i = 0; i < floorThree.getCurrentSize(); i++)
-                    {
-                        // checks to see if any cars should leave based on
-                        // their transaction time
-                        Car car = floorThree.getObject(i);
-                        fThreeTTL = car.getTransactionTime() - 1;
-                        if(car.getTransactionTime() == (fThreeTTL - car.getArrivalTime()))
-                        {
-                            leavingQueue.enqueue(floorThree.replace(car, null));
-                            System.out.println("Car " + car.getCarNumber() + " enters the leavingQueue from floorThree at time " + clock);
-                            departureQueueSize++;
-                        } // end if
-                    } // end for
-                } // end if
-            } // end for
-        } // end simulate
+    public int nextAvailableLocation(){
+        for (int i = 0; i < parkingGarage.length; i++){
+            if (!parkingGarage[i].isArrayFull()){
+                return i;
+            }
+        }
+        return -1;
+    }
 
-        /**
-         * Displays summary results of the situation.
-         */
+    public int randomLevel(){
+        Vector<Integer> occupiedFloors = new Vector<>();
+        for (int i = 0; i < parkingGarage.length; i++){
+            if (!parkingGarage[i].isEmpty()){
+                occupiedFloors.add(i);
+            }
+        }
+        Random rand = new Random();
+        if (occupiedFloors.size() > 0){
+            return occupiedFloors.get(rand.nextInt(occupiedFloors.size()));
+        }
+        else {
+            return -1;
+        }
+    }
 
-        public void displayResults()
-        {
-            System.out.println();
-            System.out.println("Number of arrivals = " + enteredQueueSize);
-            System.out.println("Number of departures = " + departureQueueSize);
-            int leftToEnter = enteredQueueSize - successfulEntries;
-            int leftToLeave = departureQueueSize - successfulDepartures;
-            System.out.println("Number of arrivals left = " + leftToEnter);
-            System.out.println("Number of departures left = " + leftToLeave);
-            System.out.println("There were a total of " + floorOneEntries + " cars that parked on floorOne, " +
-                    floorTwoEntries + " cars that parked on floorTwo, and " + floorThreeEntries + " cars that parked on floorThree.");
-        } // end displayResults
+    /**
+     * Prints out relevant statistics about the simulation.
+     */
+    public void displayResults(){
+        System.out.println("Cars parked: " + numberOfCars);
+        System.out.println("Cars in garage: " + totalArrivals);
+        System.out.println("Average wait time: " + (totalTimeWaited / numberOfCars));
+        System.out.println("Cars waiting to get in: " + countCars(entryLine));
+        for (int i = 0; i < parkingGarage.length; i++){
+            System.out.println("Number of cars on floor " + i + ": " + parkingGarage[i].getSize());
+        }
+        clearGarage();
+    }
 
-        /**
-         * Initializes the simulation
-         */
-        public final void reset()
-        {
-            enteringQueue.clear();
-            leavingQueue.clear();
-            enteredQueueSize = 0;
-            departureQueueSize = 0;
-            successfulEntries = 0;
-            successfulDepartures = 0;
-            floorOneEntries = 0;
-            floorTwoEntries = 0;
-            floorThreeEntries = 0;
-        } // end reset
-    } // end ParkingWaitLine
+    /**
+     * retrieves the number of cars in a given queue
+     * @param carQueue the queueinterface implementing object whose contents will be counted
+     * @return an int equal to the number of cars in the queue
+     */
+    public int countCars(QueueInterface<Car> carQueue){
+        int counter = 0;
+        while (!carQueue.isEmpty()){
+            counter++;
+            carQueue.dequeue();
+        }
+        return counter;
+    }
 
+    /**
+     * Completely resets the garage for a new simulation
+     */
+    public void clearGarage(){
+        numberOfCars = 0;
+        totalTimeWaited = 0;
+        totalArrivals = 0;
+        for (int i = 0; i < parkingGarage.length; i++){
+            parkingGarage[i].clear();
+        }
+        entryLine.clear();
+    }
 }
