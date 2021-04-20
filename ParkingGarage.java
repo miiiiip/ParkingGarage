@@ -1,6 +1,5 @@
-import LinkedQueue.*;
-import arrayBag.*;
-public class ParkingGarage {
+public class ParkingGarage
+{
     //ZEKE BRANCH
         private QueueInterface<Car> enteringQueue;
         private QueueInterface<Car> leavingQueue;
@@ -177,6 +176,4 @@ public class ParkingGarage {
             floorTwoEntries = 0;
             floorThreeEntries = 0;
         } // end reset
-    } // end ParkingWaitLine
-
-}
+} // end ParkingGarage

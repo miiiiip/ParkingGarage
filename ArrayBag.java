@@ -239,5 +239,36 @@ public final class ArrayBag<T> implements BagInterface<T>{
             remove(anEntry);
         } // end while
     } // end removeAll
+
+    /**
+     * Returns but does not remove the object at a specified index
+     * @param givenIndex   The index of the desired object
+     * @return The object at the specified index
+     */
+    public T getObject(int givenIndex)
+    {
+        T result = null;
+        if (!isEmpty() && (givenIndex >= 0))
+        {
+            result = bag[givenIndex]; // entry to remove
+        } // end if
+        return result;
+    } // end getObject
+
+    // Returns true if the bag is full, false otherwise.
+    public boolean isFull()
+    {
+        return numberOfEntries >= bag.length;
+    } // end isArrayFull
+
+    /**
+     * Gets the current size of the bag.
+     * @return The number of entries in the bag.
+     */
+    public int getCurrentSize()
+    {
+        return numberOfEntries;
+    } // end getCurrentSize
+
 }
 

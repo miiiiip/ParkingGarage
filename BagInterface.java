@@ -58,5 +58,31 @@ public interface BagInterface<T> {
      */
     public T[] toArray();
 
+    /**
+     * Checks to see if the bag is full
+     * @return  true if the bag is full, false otherwise
+     */
+    public boolean isFull();
+
+    /**
+     * Return but does not remove the object at a specified index
+     * @param index   The index of the desired object
+     * @return The object at the specified index
+     */
+    public T getObject(int index);
+
+    /** Gets the current number of entries in this bag
+     * @return The integer number of entries currently in the bag.
+     */
+    public int getCurrentSize();
+
+    /**
+     * Replaces and returns a specified object currently in
+     * the bag with a given object
+     * @param anEntry The entry that will be swapped out.
+     * @param replacement The object that will replace the specified entry.
+     * @return The object that was replaced.
+     */
+    public T replace(T anEntry, T replacement);
 }
 
