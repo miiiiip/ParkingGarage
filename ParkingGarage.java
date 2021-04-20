@@ -57,7 +57,7 @@ public class ParkingGarage{
             }
         }
         displayResults();
-    }
+    } // end simulate
 
     public int nextAvailableLocation(){
         for (int i = 0; i < parkingGarage.length; i++){
