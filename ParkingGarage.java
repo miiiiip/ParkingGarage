@@ -12,10 +12,15 @@ public class ParkingGarage{
     // Queue containing cars waiting to enter the garage
     private QueueInterface<Car> entryLine = new LinkedQueue<Car>();
 
+    // Queue containing cars waiting to leave the garage
+    private QueueInterface<Car> exitLIne = new LinkedQueue<>();
+
     // Variables for performance tracking
     private int numberOfCars; // the number of cars that parked during the simulation
     private int totalTimeWaited; // the total number of clock ticks cars waited in queue before parking
     private int totalArrivals; // the number of cars that arrived at the garage, regardless of whether or not they parked
+    private int totalDepartures; // the number of cars that have left the garage
+    private int runningTally; // keeps track of the total number of cars total, in the parking garage at any time.
 
     public ParkingGarage(){
         ArrayBag<Car> f1 = new ArrayBag<Car>(10);
@@ -24,7 +29,7 @@ public class ParkingGarage{
         for (int i = 0; i < parkingGarage.length; i++){
             parkingGarage[i] = f1;
         }
-    }
+    } // end constructor
 
     public void simulate(int duration, double arrivalProb){
         Random rand = new Random();
@@ -33,25 +38,42 @@ public class ParkingGarage{
                 int level = randomLevel();
                 if (level != -1){
                     Car departingCar = parkingGarage[level].randRemove();
+                    System.out.println("Car number " + departingCar.getCarNumber() + ", has left the parking garage.");
+                    totalDepartures++;
+                    runningTally--;
                 }
             }
             if (rand.nextFloat() < arrivalProb){
-                Car newCar = new Car(time);
+                Car newCar = new Car(time, totalArrivals);
                 totalArrivals++;
                 int nextSpot = nextAvailableLocation();
                 if (nextSpot != -1){
-                    if (entryLine.isEmpty()){
+                    if (entryLine.isEmpty())
+                        // if the waiting line to enter the parking garage is empty,
+                        // the car does not have to enter the queue, and can just go to
+                        // a parking spot
+                    {
                         parkingGarage[nextSpot].add(newCar);
+                        runningTally++;
+                        System.out.println("Car number " + newCar.getCarNumber() + ", has parked.");
                     }
-                    else{
+                    else
+                        // the waiting line to enter the parking garage is not empty,
+                        // cars wishing to enter must first get into the waiting queue
+                        // and cars that were already in the queue get to park
+                        {
                         Car enteringCar = entryLine.dequeue();
                         parkingGarage[nextSpot].add(enteringCar);
+                        runningTally++;
+                            System.out.println("Car number " + enteringCar.getCarNumber() + ", has parked");
                         totalTimeWaited += time - enteringCar.getArrivalTime();
                         entryLine.enqueue(newCar);
                     }
                     numberOfCars++;
                 }
                 else {
+                    // if all the parking floors are occupied, the car wishing
+                    // to enter the parking garage must get in the waiting queue
                     entryLine.enqueue(newCar);
                 }
             }
@@ -79,7 +101,9 @@ public class ParkingGarage{
         if (occupiedFloors.size() > 0){
             return occupiedFloors.get(rand.nextInt(occupiedFloors.size()));
         }
-        else {
+        else
+            // if all the floors are full
+            {
             return -1;
         }
     }
@@ -88,10 +112,11 @@ public class ParkingGarage{
      * Prints out relevant statistics about the simulation.
      */
     public void displayResults(){
-        System.out.println("Cars parked: " + numberOfCars);
-        System.out.println("Cars in garage: " + totalArrivals);
+        System.out.println("Total number of cars parked: " + numberOfCars);
+        System.out.println("Number of cars currently in the garage: " + runningTally);
         System.out.println("Average wait time: " + (totalTimeWaited / numberOfCars));
-        System.out.println("Cars waiting to get in: " + countCars(entryLine));
+        System.out.println("Cars waiting to get in: " + (totalArrivals - numberOfCars));
+        System.out.println("Cars that have entered and left the garage: " + totalDepartures);
         for (int i = 0; i < parkingGarage.length; i++){
             System.out.println("Number of cars on floor " + i + ": " + parkingGarage[i].getSize());
         }
@@ -119,6 +144,7 @@ public class ParkingGarage{
         numberOfCars = 0;
         totalTimeWaited = 0;
         totalArrivals = 0;
+        totalDepartures = 0;
         for (int i = 0; i < parkingGarage.length; i++){
             parkingGarage[i].clear();
         }
