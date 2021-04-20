@@ -113,7 +113,7 @@ public class ParkingGarage{
      */
     public void displayResults(){
         System.out.println("Total number of cars parked: " + numberOfCars);
-        System.out.println("Number of cars currently in the garage: " + runningTally);
+        System.out.println("Number of cars currently in the garage: " + (runningTally * 3));
         System.out.println("Average wait time: " + (totalTimeWaited / numberOfCars));
         System.out.println("Cars waiting to get in: " + (totalArrivals - numberOfCars));
         System.out.println("Cars that have entered and left the garage: " + totalDepartures);
