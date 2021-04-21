@@ -13,7 +13,7 @@ public class ParkingGarage{
     private QueueInterface<Car> entryLine = new LinkedQueue<Car>();
 
     // Variables for performance tracking
-    private int numberOfCars; // the number of cars that parked during the simulation
+    private int numberOfCars = 0; // the number of cars that parked during the simulation
     private int totalTimeWaited; // the total number of clock ticks cars waited in queue before parking
     private int totalArrivals; // the number of cars that arrived at the garage, regardless of whether or not they parked
 
