@@ -25,6 +25,7 @@ public class ParkingGarage{
             parkingGarage[i] = new ArrayBag<>(10);
             // creates a new ArrayBag for each index of the parkingGarage
         }
+        clearGarage();
     } // end constructor
 
     public void simulate(int duration, double arrivalProb){
@@ -119,9 +120,10 @@ public class ParkingGarage{
      * Prints out relevant statistics about the simulation.
      */
     public void displayResults(){
+        float averageWait = (float)totalTimeWaited / (float)numberOfCars;
         System.out.println("Total number of cars parked: " + numberOfCars);
         System.out.println("Number of cars currently in the garage: " + runningTally);
-        System.out.println("Average wait time: " + (totalTimeWaited / numberOfCars));
+        System.out.println("Average wait time: " + averageWait + " ticks");
         System.out.println("Cars waiting to get in: " + countCars(entryLine));
         System.out.println("Cars that have entered and left the garage: " + totalDepartures);
         for (int i = 0; i < parkingGarage.length; i++){
