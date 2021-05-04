@@ -5,7 +5,7 @@ import java.util.Vector;
  * This class simulates activity inside of a 3-story parking garage at a grocery store.
  */
 public class ParkingGarage{
-    // 2D array representing the garage itself
+    // array representing the garage itself
     @SuppressWarnings("unchecked")
     private ArrayBag<Car>[] parkingGarage = (ArrayBag<Car>[]) new ArrayBag[3];
 
@@ -21,9 +21,9 @@ public class ParkingGarage{
         ArrayBag<Car> f1 = new ArrayBag<Car>(10);
         ArrayBag<Car> f2 = new ArrayBag<Car>(10);
         ArrayBag<Car> f3 = new ArrayBag<Car>(10);
-        for (int i = 0; i < parkingGarage.length; i++){
-            parkingGarage[i] = f1;
-        }
+        parkingGarage[0] = f1;
+        parkingGarage[1] = f2;
+        parkingGarage[2] = f3;
     }
 
     public void simulate(int duration, double arrivalProb){
