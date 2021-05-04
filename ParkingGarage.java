@@ -28,6 +28,11 @@ public class ParkingGarage{
         clearGarage();
     } // end constructor
 
+    /**
+     * Simulates a three-level parking garage using Arrays and Queues
+     * @param duration How long the simulation will run
+     * @param arrivalProb Probability that a car "spawns" or arrives at the parking garage
+     */
     public void simulate(int duration, double arrivalProb){
         Random rand = new Random();
         for (int time = 0; time <= duration; time++){
@@ -86,7 +91,7 @@ public class ParkingGarage{
 
     // gets the next available floor of the parking garage
     // i.e. returns a floor that is NOT full or -1 if all are full
-    public int nextAvailableLocation(){
+    private int nextAvailableLocation(){
         for (int i = 0; i < parkingGarage.length; i++){
             if (!parkingGarage[i].isArrayFull()){
                 return i;
@@ -96,7 +101,7 @@ public class ParkingGarage{
     }
 
     // returns a random floor that is NOT full of the parking garage
-    public int randomLevel(){
+    private int randomLevel(){
         Vector<Integer> occupiedFloors = new Vector<>();
         for (int i = 0; i < parkingGarage.length; i++)
         {
@@ -137,7 +142,7 @@ public class ParkingGarage{
      * @param carQueue the QueueInterface implementing object whose contents will be counted
      * @return an int equal to the number of cars in the queue
      */
-    public int countCars(QueueInterface<Car> carQueue){
+    private int countCars(QueueInterface<Car> carQueue){
         int counter = 0;
         while (!carQueue.isEmpty()){
             counter++;

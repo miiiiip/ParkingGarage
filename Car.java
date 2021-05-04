@@ -1,3 +1,6 @@
+/**
+ * Creates a Car object to use in our simulation.
+ */
 public class Car {
     private int arrivalTime;
     private int carNumber;

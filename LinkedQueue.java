@@ -1,3 +1,7 @@
+/**
+ * Blueprint for the ADT Linked Queue
+ * @param <T>
+ */
 public class LinkedQueue<T> implements QueueInterface<T>{
 
     private Node firstNode; // node at the end of the queue

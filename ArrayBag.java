@@ -2,7 +2,6 @@ import java.util.Random;
 
 /**
  * This class is the blueprint for an ADT bag as discussed in "Data Structures and Abstractions"
- * @author Mason Eischens
  */
 
 public final class ArrayBag<T> implements BagInterface<T>{

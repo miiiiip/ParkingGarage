@@ -1,3 +1,6 @@
+/**
+ * An interface that describes the the operations of a queue.
+ */
 public interface QueueInterface<T>{
     /**
      * adds a specified entry to the back of the queue
