@@ -109,7 +109,7 @@ public class ParkingGarage{
         System.out.println("Cars in garage: " + totalArrivals);
         System.out.println("Average wait time: " + (totalTimeWaited / numberOfCars));
         System.out.println("Cars waiting to get in: " + countCars(entryLine) + "\n");
-        for (int i = 0; i < parkingGarage.length; i++){
+        for (int i = parkingGarage.length - 1; i > -1; i--){
             System.out.print("[");
             int length = parkingGarage[i].getSize();
             for (int ii = 0; ii < length; ii++){
