@@ -134,7 +134,7 @@ public class ParkingGarage{
 
     /**
      * retrieves the number of cars in a given queue
-     * @param carQueue the queueinterface implementing object whose contents will be counted
+     * @param carQueue the QueueInterface implementing object whose contents will be counted
      * @return an int equal to the number of cars in the queue
      */
     public int countCars(QueueInterface<Car> carQueue){
