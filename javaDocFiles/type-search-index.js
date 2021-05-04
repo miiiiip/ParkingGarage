@@ -1,1 +1,0 @@
-typeSearchIndex = [{"l":"All Classes","u":"allclasses-index.html"},{"p":"<Unnamed>","l":"ArrayBag"},{"p":"<Unnamed>","l":"BagInterface"},{"p":"<Unnamed>","l":"Car"},{"p":"<Unnamed>","l":"EmptyQueueException"},{"p":"<Unnamed>","l":"GarageDemo"},{"p":"<Unnamed>","l":"LinkedQueue"},{"p":"<Unnamed>","l":"ParkingGarage"},{"p":"<Unnamed>","l":"QueueInterface"}];updateSearchResults();
