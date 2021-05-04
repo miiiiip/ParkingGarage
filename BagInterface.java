@@ -9,7 +9,7 @@ public interface BagInterface<T> {
     public int getSize();
 
     /** Checks whether or not the bag is empty.
-     * @returns true if the bag is empty, false otherwise
+     * @return true if the bag is empty, false otherwise
      */
     public boolean isEmpty();
 
